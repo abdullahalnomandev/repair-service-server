@@ -3,9 +3,17 @@ const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
+const admin = require("firebase-admin");
 
 app.use(express.json());
 app.use(cors());
+
+var serviceAccount = require("./restore-repaier-service-firebase-adminsdk-mlk80-e47e2cc8c7.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://restore-repaier-service.firebaseio.com",
+});
 
 const uri = `mongodb+srv://${process.env.BD_USER}:${process.env.DBA_PASS}@cluster0.ez7qy.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
@@ -20,9 +28,7 @@ client.connect((err) => {
   const bookingCollection = client
     .db(process.env.DB_NAME)
     .collection("booking");
-    const reviewCollection = client
-    .db(process.env.DB_NAME)
-    .collection("review");
+  const reviewCollection = client.db(process.env.DB_NAME).collection("review");
 
   // [ SERVICES COLLECTION] //
 
@@ -70,6 +76,35 @@ client.connect((err) => {
     });
   });
 
+  // GET Booking
+  app.get("/bookings", (req, res) => {
+    const email = req.query.email;
+    const bearer = req.headers.authorization;
+    if (bearer && bearer.startsWith("Bearer ")) {
+      const idToken = bearer.split(" ")[1];
+      console.log(idToken);
+      // getAuth()
+
+      admin
+        .auth()
+        .verifyIdToken(idToken)
+        .then((decodedToken) => {
+          const uid = decodedToken.uid;
+          const tokenEmail = decodedToken.email;
+          if (tokenEmail === req.query.email) {
+            bookingCollection
+              .find({ email: email })
+              .toArray((err, documents) => {
+                res.send(documents);
+              });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  });
+
   // [ REVIEW COLLECTION] //
 
   //POST Review
@@ -87,9 +122,6 @@ client.connect((err) => {
       res.send(document);
     });
   });
-
-    
-
 });
 
 app.get("/", async (req, res) => {
