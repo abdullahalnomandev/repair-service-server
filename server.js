@@ -80,17 +80,16 @@ client.connect((err) => {
   app.get("/bookings", (req, res) => {
     const email = req.query.email;
     const bearer = req.headers.authorization;
+    console.log(email);
     if (bearer && bearer.startsWith("Bearer ")) {
       const idToken = bearer.split(" ")[1];
-      console.log(idToken);
       // getAuth()
-
       admin
         .auth()
         .verifyIdToken(idToken)
         .then((decodedToken) => {
-          const uid = decodedToken.uid;
           const tokenEmail = decodedToken.email;
+          console.log("tokenEmail",tokenEmail);
           if (tokenEmail === req.query.email) {
             bookingCollection
               .find({ email: email })
