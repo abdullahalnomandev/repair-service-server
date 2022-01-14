@@ -76,10 +76,11 @@ client.connect((err) => {
     });
   });
 
-  // GET Booking
+  // GET Booking by auth
   app.get("/bookings", (req, res) => {
     const email = req.query.email;
     const bearer = req.headers.authorization;
+ 
     console.log(email);
     if (bearer && bearer.startsWith("Bearer ")) {
       const idToken = bearer.split(" ")[1];
@@ -102,6 +103,34 @@ client.connect((err) => {
           console.log(error);
         });
     }
+  });
+
+  // GET ALL BOOking
+
+  app.get("/allBookings", (req, res) => {
+     bookingCollection.find({}).toArray((err, document) => {
+      res.send(document);
+    });
+  });
+
+  // PATCH booking
+  app.patch("/bookStatus/:id", (req, res) => {
+    const bookingId = req.params.id;
+    const updateObject = req.body;
+    bookingCollection
+      .updateOne({ _id: new ObjectId(bookingId) }, { $set: updateObject })
+      .then((result) => {
+        res.send(result);
+        console.log(result);
+      });
+  });
+
+
+  //Delete Booking
+  app.delete("/deleteBooking/:id", (req, res) => {
+    const bookingId = req.params.id;
+    console.log("bookingId",bookingId);
+    bookingCollection.deleteOne({ _id: ObjectId(bookingId) });
   });
 
   // [ REVIEW COLLECTION] //
