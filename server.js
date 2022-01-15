@@ -22,13 +22,10 @@ const client = new MongoClient(uri, {
 });
 
 client.connect((err) => {
-  const serviceCollection = client
-    .db(process.env.DB_NAME)
-    .collection("product");
-  const bookingCollection = client
-    .db(process.env.DB_NAME)
-    .collection("booking");
+  const serviceCollection = client.db(process.env.DB_NAME)  .collection("product");
+  const bookingCollection = client .db(process.env.DB_NAME)  .collection("booking");
   const reviewCollection = client.db(process.env.DB_NAME).collection("review");
+  const adminCollection = client.db(process.env.DB_NAME).collection("admin");
 
   // [ SERVICES COLLECTION] //
 
@@ -150,6 +147,43 @@ client.connect((err) => {
       res.send(document);
     });
   });
+
+  // [ADMIN COLLECTION]
+
+  // POST  ADMIN
+  app.post('/admin',(req,res)=>{
+    adminCollection.insertOne(req.body).then((result)=>{
+      res.send(result)
+    })
+  })
+
+  //  GET ADMIN
+  app.get('/allAdmin',(req,res)=>{
+      adminCollection.find({}).toArray((err,document)=>{
+        res.send(document)
+      })
+  })
+
+  // DELETE ADMIN
+  app.delete("/deleteAdmin/:id", (req, res) => {
+    const adminId = req.params.id;
+    console.log("adminId",adminId);
+    adminCollection.deleteOne({ _id: ObjectId(adminId) });
+  });
+  
+  //IS ADMIN
+
+  app.get('/checkAdmin/:email', async (req, res) => {
+    const email = req.params.email
+    const query = { email: email }
+    const user = await adminCollection.findOne(query)
+    let isAdmin = false
+    if (user?.role === 'admin') {
+      isAdmin = true
+    }
+    res.json({ admin: isAdmin })
+  })
+
 });
 
 app.get("/", async (req, res) => {
