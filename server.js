@@ -4,7 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 const app = express();
 const admin = require("firebase-admin");
-
+const nodemailer = require("nodemailer");
 app.use(express.json());
 app.use(cors());
 
@@ -22,8 +22,12 @@ const client = new MongoClient(uri, {
 });
 
 client.connect((err) => {
-  const serviceCollection = client.db(process.env.DB_NAME)  .collection("product");
-  const bookingCollection = client .db(process.env.DB_NAME)  .collection("booking");
+  const serviceCollection = client
+    .db(process.env.DB_NAME)
+    .collection("product");
+  const bookingCollection = client
+    .db(process.env.DB_NAME)
+    .collection("booking");
   const reviewCollection = client.db(process.env.DB_NAME).collection("review");
   const adminCollection = client.db(process.env.DB_NAME).collection("admin");
 
@@ -77,7 +81,7 @@ client.connect((err) => {
   app.get("/bookings", (req, res) => {
     const email = req.query.email;
     const bearer = req.headers.authorization;
- 
+
     console.log(email);
     if (bearer && bearer.startsWith("Bearer ")) {
       const idToken = bearer.split(" ")[1];
@@ -87,7 +91,7 @@ client.connect((err) => {
         .verifyIdToken(idToken)
         .then((decodedToken) => {
           const tokenEmail = decodedToken.email;
-          console.log("tokenEmail",tokenEmail);
+          console.log("tokenEmail", tokenEmail);
           if (tokenEmail === req.query.email) {
             bookingCollection
               .find({ email: email })
@@ -105,7 +109,7 @@ client.connect((err) => {
   // GET ALL BOOking
 
   app.get("/allBookings", (req, res) => {
-     bookingCollection.find({}).toArray((err, document) => {
+    bookingCollection.find({}).toArray((err, document) => {
       res.send(document);
     });
   });
@@ -122,11 +126,10 @@ client.connect((err) => {
       });
   });
 
-
   //Delete Booking
   app.delete("/deleteBooking/:id", (req, res) => {
     const bookingId = req.params.id;
-    console.log("bookingId",bookingId);
+    console.log("bookingId", bookingId);
     bookingCollection.deleteOne({ _id: ObjectId(bookingId) });
   });
 
@@ -151,43 +154,66 @@ client.connect((err) => {
   // [ADMIN COLLECTION]
 
   // POST  ADMIN
-  app.post('/admin',(req,res)=>{
-    adminCollection.insertOne(req.body).then((result)=>{
-      res.send(result)
-    })
-  })
+  app.post("/admin", (req, res) => {
+    adminCollection.insertOne(req.body).then((result) => {
+      res.send(result);
+    });
+  });
 
   //  GET ADMIN
-  app.get('/allAdmin',(req,res)=>{
-      adminCollection.find({}).toArray((err,document)=>{
-        res.send(document)
-      })
-  })
+  app.get("/allAdmin", (req, res) => {
+    adminCollection.find({}).toArray((err, document) => {
+      res.send(document);
+    });
+  });
 
   // DELETE ADMIN
   app.delete("/deleteAdmin/:id", (req, res) => {
     const adminId = req.params.id;
-    console.log("adminId",adminId);
+    console.log("adminId", adminId);
     adminCollection.deleteOne({ _id: ObjectId(adminId) });
   });
-  
+
   //IS ADMIN
 
-  app.get('/checkAdmin/:email', async (req, res) => {
-    const email = req.params.email
-    const query = { email: email }
-    const user = await adminCollection.findOne(query)
-    let isAdmin = false
-    if (user?.role === 'admin') {
-      isAdmin = true
+  app.get("/checkAdmin/:email", async (req, res) => {
+    const email = req.params.email;
+    const query = { email: email };
+    const user = await adminCollection.findOne(query);
+    let isAdmin = false;
+    if (user?.role === "admin") {
+      isAdmin = true;
     }
-    res.json({ admin: isAdmin })
-  })
-
+    res.json({ admin: isAdmin });
+  });
 });
 
-app.get("/", async (req, res) => {
-  await res.send("Hello BANGLADESH");
+app.post("/send_mail", cors(), async (req, res) => {
+  let serviceInfo = req.body;
+  const transport = nodemailer.createTransport({
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    auth: {
+      user: process.env.DB_EMAIL_USER,
+      pass: process.env.DB_EMAIL_PASS,
+    },
+  });
+
+
+  await transport.sendMail({
+    from:`${serviceInfo.email}`,
+    to: "abdullahalnoman1512@gmail.com",
+    subject: "REPAIR SERVICE BOOKING",
+    html: `
+    <div style="border:2px solid #ddd">
+    <h1 style="color:blue;text-align:center;">Booking Details</h1>
+    <h4>${serviceInfo.serviceName}</h4>
+    <p>Phone:${serviceInfo.phone}</p>
+    <p>Gender:${serviceInfo.Gender}<p/>
+    <p>Booking Date:${serviceInfo.bookingDate}</p>
+    </div>
+    `,
+  });
 });
 
 app.listen(process.env.port || 5000);
