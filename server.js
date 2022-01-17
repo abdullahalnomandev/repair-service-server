@@ -3,6 +3,7 @@ const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
+const port=5000
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
 app.use(express.json());
@@ -220,4 +221,4 @@ app.post("/send_mail", cors(), async (req, res) => {
   });
 });
 
-app.listen(process.env.PORT || 5000);
+app.listen(process.env.PORT || port);
