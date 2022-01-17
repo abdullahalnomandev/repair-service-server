@@ -188,8 +188,10 @@ client.connect((err) => {
   });
 });
 
-app.get('/',(req,res)=>{
-  res.send('WELCOME')
+
+
+app.get('/test',(req,res)=>{
+  res.send('WELCOME TO MY SERVER')
 })
 
 app.post("/send_mail", cors(), async (req, res) => {
