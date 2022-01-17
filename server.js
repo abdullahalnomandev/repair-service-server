@@ -151,6 +151,13 @@ client.connect((err) => {
     });
   });
 
+  app.get("/allReview", (req, res) => {
+    const products = reviewCollection.find({});
+    products.toArray((err, document) => {
+      res.send({success:'Successfully done'});
+    });
+  });
+
   // [ADMIN COLLECTION]
 
   // POST  ADMIN
