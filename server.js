@@ -144,17 +144,20 @@ client.connect((err) => {
   });
 
   //GET Review
-  app.get("/reviews", (req, res) => {
-    const products = reviewCollection.find({});
-    products.toArray((err, document) => {
-      res.send(document);
-    });
-  });
+  // app.get("/reviews", (req, res) => {
+  //   const products = reviewCollection.find({});
+  //   products.toArray((err, document) => {
+  //     console.log(document);
+  //     res.send(document);
+  //   });
+  // });
 
   app.get("/allReview", (req, res) => {
     const products = reviewCollection.find({});
     products.toArray((err, document) => {
-      res.send({success:'Successfully done'});
+      console.log(typeof document);
+      res.json({success:'Successfully done','data':document})
+      
     });
   });
 
