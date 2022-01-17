@@ -156,7 +156,7 @@ client.connect((err) => {
     const products = reviewCollection.find({});
     products.toArray((err, document) => {
       console.log(typeof document);
-      res.json({success:'Successfully completed','data':document})
+      res.json({success:'Successfull','data':[{"_id":"61dc8ac8f16ba080127df1ad","review":"5","description":"Good","name":"Abdullah Al Noman","email":"abdullahalnoman1512@gmail.com","image":"https://lh3.googleusercontent.com/a-/AOh14GgB3XK7pURojMoQ1zXDgyazMU3PReAbihQ9VBK8=s96-c"},{"_id":"61dc8f833bf22dc47005a932","review":"other","description":"wonderful","name":"Abdulla Al Noman","email":"abdullaalnuman129@gmail.com","image":"https://lh3.googleusercontent.com/a-/AOh14GjYbwJoQ9JFUG7tS5cYMaH9wooJAD-J2bg58O9K4w=s96-c"}]})
       
     });
   });
