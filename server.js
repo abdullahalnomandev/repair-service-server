@@ -159,7 +159,7 @@ client.connect((err) => {
 
   app.get('/allReview', (req, res) => {
     console.log('review req recieved')
-    reviewCollection.find().toArray((err, docs) => res.send(docs))
+    reviewCollection.find().toArray((err, docs) => res.send({docs,err}))
 })
   // [ADMIN COLLECTION]
 
