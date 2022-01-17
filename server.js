@@ -186,31 +186,27 @@ client.connect((err) => {
     }
     res.json({ admin: isAdmin });
   });
-});
 
-
-
-app.get('/test',(req,res)=>{
-  res.send('WELCOME TO MY SERVER')
-})
-
-app.post("/send_mail", cors(), async (req, res) => {
-  let serviceInfo = req.body;
-  const transport = nodemailer.createTransport({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    auth: {
-      user: process.env.DB_EMAIL_USER,
-      pass: process.env.DB_EMAIL_PASS,
-    },
+  app.get("/test", (req, res) => {
+    res.send("WELCOME TO MY SERVER");
   });
 
+  app.post("/send_mail", cors(), async (req, res) => {
+    let serviceInfo = req.body;
+    const transport = nodemailer.createTransport({
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      auth: {
+        user: process.env.DB_EMAIL_USER,
+        pass: process.env.DB_EMAIL_PASS,
+      },
+    });
 
-  await transport.sendMail({
-    from:`${serviceInfo.email}`,
-    to: "abdullahalnoman1512@gmail.com",
-    subject: "REPAIR SERVICE BOOKING",
-    html: `
+    await transport.sendMail({
+      from: `${serviceInfo.email}`,
+      to: "abdullahalnoman1512@gmail.com",
+      subject: "REPAIR SERVICE BOOKING",
+      html: `
     <div style="border:2px solid #ddd">
     <h1 style="color:blue;text-align:center;">Booking Details</h1>
     <h4>${serviceInfo.serviceName}</h4>
@@ -219,6 +215,7 @@ app.post("/send_mail", cors(), async (req, res) => {
     <p>Booking Date:${serviceInfo.bookingDate}</p>
     </div>
     `,
+    });
   });
 });
 
