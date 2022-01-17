@@ -188,6 +188,10 @@ client.connect((err) => {
   });
 });
 
+app.get('/',(req,res)=>{
+  res.send('WELCOME')
+})
+
 app.post("/send_mail", cors(), async (req, res) => {
   let serviceInfo = req.body;
   const transport = nodemailer.createTransport({
