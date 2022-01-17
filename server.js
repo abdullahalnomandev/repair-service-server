@@ -3,7 +3,6 @@ const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
-const port=5000
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
 app.use(express.json());
@@ -177,9 +176,10 @@ client.connect((err) => {
 
   //IS ADMIN
 
-  app.get("/checkAdmin/:email", (req, res) => {
+  app.get("/checkAdmin/:email", async (req, res) => {
     const email = req.params.email;
-    const user =  adminCollection.findOne({email:email});
+    const query = { email: email };
+    const user = await adminCollection.findOne(query);
     let isAdmin = false;
     if (user?.role === "admin") {
       isAdmin = true;
@@ -220,4 +220,4 @@ app.post("/send_mail", cors(), async (req, res) => {
   });
 });
 
-app.listen(process.env.PORT || port);
+app.listen(process.env.PORT || 5000);
