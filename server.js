@@ -156,7 +156,7 @@ client.connect((err) => {
     const products = reviewCollection.find({});
     products.toArray((err, document) => {
       console.log(typeof document);
-      res.json({success:'Successfully done','data':document})
+      res.json({success:'Successfully completed','data':document})
       
     });
   });
