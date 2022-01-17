@@ -143,22 +143,17 @@ client.connect((err) => {
     });
   });
 
-  //GET Review
-  // app.get("/reviews", (req, res) => {
-  //   const products = reviewCollection.find({});
-  //   products.toArray((err, document) => {
-  //     console.log(document);
-  //     res.send(document);
-  //   });
-  // });
+  // GET Review
+  app.get("/reviews", (req, res) => {
+    const products = reviewCollection.find({});
+    products.toArray((err, document) => {
+      console.log(document);
+      res.send(document);
+    });
+  });
 
-  // app.get("/allReview",async (req, res) => {
-  //   const products = await reviewCollection.find({});
-  //    res.json({status:'success done',products:products})
-  // });
 
   app.get('/allReview', (req, res) => {
-    console.log('review req recieved')
     reviewCollection.find().toArray((err, docs) => res.send({docs,err}))
 })
   // [ADMIN COLLECTION]
