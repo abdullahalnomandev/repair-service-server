@@ -152,11 +152,15 @@ client.connect((err) => {
   //   });
   // });
 
-  app.get("/allReview",async (req, res) => {
-    const products = await reviewCollection.find({});
-     res.send({status:'success',products:products})
-  });
+  // app.get("/allReview",async (req, res) => {
+  //   const products = await reviewCollection.find({});
+  //    res.json({status:'success done',products:products})
+  // });
 
+  app.get('/allReview', (req, res) => {
+    console.log('review req recieved')
+    reviewCollection.find().toArray((err, docs) => res.send(docs))
+})
   // [ADMIN COLLECTION]
 
   // POST  ADMIN
