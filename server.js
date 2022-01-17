@@ -216,4 +216,4 @@ app.post("/send_mail", cors(), async (req, res) => {
   });
 });
 
-app.listen(process.env.port || 5000);
+app.listen(process.env.PORT || 5000);
