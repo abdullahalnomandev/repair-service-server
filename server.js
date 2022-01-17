@@ -152,13 +152,9 @@ client.connect((err) => {
   //   });
   // });
 
-  app.get("/allReview", (req, res) => {
-    const products = reviewCollection.find({});
-    products.toArray((err, document) => {
-      console.log(typeof document);
-      res.json(document)
-      
-    });
+  app.get("/allReview",async (req, res) => {
+    const products = await reviewCollection.find({});
+     res.send({status:'success',products:products})
   });
 
   // [ADMIN COLLECTION]
