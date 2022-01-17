@@ -179,8 +179,7 @@ client.connect((err) => {
 
   app.get("/checkAdmin/:email", async (req, res) => {
     const email = req.params.email;
-    const query = { email: email };
-    const user = await adminCollection.findOne(query);
+    const user = await adminCollection.findOne({email:email});
     let isAdmin = false;
     if (user?.role === "admin") {
       isAdmin = true;
